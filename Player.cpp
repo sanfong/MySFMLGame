@@ -58,7 +58,7 @@ void Player::update(Vector2f mousePos, float deltaTime)
 		}
 		if (hitBoarder)
 		{
-			setPosition(playerPos);
+			shape.setPosition(playerPos);
 		}
 		#pragma endregion
 

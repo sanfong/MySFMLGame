@@ -1,10 +1,12 @@
 #include <iostream>
+#include <time.h>
 #include "FongFunc.h"
 #include "Entity.h"
 #include "Player.h"
 #include "Animation.h"
 #include "Camera.h"
 #include "Raycast.h"
+#include "Enemy.h"
 
 using namespace sf;
 using namespace std;
@@ -119,13 +121,9 @@ int main()
 	bool focus = true;
 	float deltaTime = 0.0f;
 	float speed = 3.f * FRAMERATE;
+	srand(time(0));
 
 	Camera camera(&view, (Vector2f)window.getSize() / 2.f);
-
-	Texture playerTexture;
-	if (!playerTexture.loadFromFile("Player.png"))
-		cout << "Player Texture not loaded" << endl;
-	Animation anime(&playerTexture, Vector2u(4, 8), 0.2f);
 
 	Texture mapTexture;
 	if (!mapTexture.loadFromFile("Map.png"))
@@ -138,7 +136,18 @@ int main()
 	wallMid.setPosition(834.f, 831.f); // opposite point - 1765 1769
 	wallMid.setFillColor(Color(255, 255, 255, 128));
 
+	Texture playerTexture;
+	if (!playerTexture.loadFromFile("Player.png"))
+		cout << "Player Texture not loaded" << endl;
+	Animation anime(&playerTexture, Vector2u(4, 8), 0.2f);
 	Player player(Vector2f(100.f, 100.f), Vector2f(200.f, 200.f), speed, &anime);
+
+	Texture enemyTexture;
+	if (!enemyTexture.loadFromFile("Enemy.png"))
+		cout << "Enemy.png not loaded" << endl;
+	Animation enemyAnime(&enemyTexture, Vector2u(2, 6), 0.3f);
+	// Enemy(Vector2f shapeSize, Vector2f startPos, Animation anime, Entity* player, float speed, int key);
+	Enemy enemy(Vector2f(100.f, 100.f), Vector2f(500.f, 200.f), &enemyAnime, &player, speed / 2);
 
 	CircleShape c(4.f);
 	c.setOrigin(Vector2f(c.getRadius(), c.getRadius()));
@@ -178,6 +187,8 @@ int main()
 
 		player.focus = focus;
 		player.update(mousePosView, deltaTime);
+		
+		enemy.update(deltaTime);
 
 		Ray ray = raycast(player.getPosition(), mousePosView - player.getPosition(), wallMid);
 
@@ -209,12 +220,11 @@ int main()
 
 		camera.update(mousePosView, player.getPosition(), deltaTime);
 
-		clickOnce(mousePosView, Mouse::isButtonPressed(Mouse::Button::Left));
+		//clickOnce(mousePosView, Mouse::isButtonPressed(Mouse::Button::Left));
 
 		window.clear(Color(128, 128, 128));
 		window.draw(map);
 		window.setView(view);
-
 		if (ray.hit)
 		{
 			c.setPosition(ray.point);
@@ -222,7 +232,7 @@ int main()
 			window.draw(line, 2, sf::Lines);
 			window.draw(c);
 		}
-
+		enemy.drawOn(window);
 		player.drawOn(window);
 		window.display();
 	}
