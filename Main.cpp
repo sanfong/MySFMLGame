@@ -146,12 +146,8 @@ int main()
 	if (!enemyTexture.loadFromFile("Enemy.png"))
 		cout << "Enemy.png not loaded" << endl;
 	Animation enemyAnime(&enemyTexture, Vector2u(2, 6), 0.3f);
-	// Enemy(Vector2f shapeSize, Vector2f startPos, Animation anime, Entity* player, float speed, int key);
-	Enemy enemy(Vector2f(100.f, 100.f), Vector2f(500.f, 200.f), &enemyAnime, &player, speed / 2);
-
-	CircleShape c(4.f);
-	c.setOrigin(Vector2f(c.getRadius(), c.getRadius()));
-	c.setFillColor(Color::Red);
+	Enemy enemy(Vector2f(100.f, 100.f), Vector2f(400.f, 200.f), &enemyAnime, &player, speed / 2.f);
+	Enemy enemy2(Vector2f(100.f, 100.f), Vector2f(300.f, 300.f), &enemyAnime, &player, speed / 2.f);
 
 	while (window.isOpen())
 	{
@@ -187,15 +183,14 @@ int main()
 
 		player.focus = focus;
 		player.update(mousePosView, deltaTime);
-		
-		enemy.update(deltaTime);
 
-		Ray ray = raycast(player.getPosition(), mousePosView - player.getPosition(), wallMid);
+		enemy.update(deltaTime);
+		enemy2.update(deltaTime);
 
 		//collision
 		if (isCollided(player.getShape(), wallMid))
 		{
-			int bisect = 100;
+			/*int bisect = 100;
 			bool hit = true;
 			Vector2f v = player.getVelocity();
 			RectangleShape dummie(player.getShape());
@@ -215,7 +210,8 @@ int main()
 				bisect -= 1;
 			}
 
-			player.setPosition(dummie.getPosition());
+			player.setPosition(dummie.getPosition());*/
+			player.move(-player.getVelocity());
 		}
 
 		camera.update(mousePosView, player.getPosition(), deltaTime);
@@ -225,14 +221,8 @@ int main()
 		window.clear(Color(128, 128, 128));
 		window.draw(map);
 		window.setView(view);
-		if (ray.hit)
-		{
-			c.setPosition(ray.point);
-			Vertex line[] = { Vertex(player.getPosition()), Vertex(ray.point) };
-			window.draw(line, 2, sf::Lines);
-			window.draw(c);
-		}
 		enemy.drawOn(window);
+		enemy2.drawOn(window);
 		player.drawOn(window);
 		window.display();
 	}

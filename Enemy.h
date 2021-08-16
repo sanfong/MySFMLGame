@@ -15,7 +15,6 @@ private:
 
 public:
 	Enemy(Vector2f shapeSize, Vector2f startPos, Animation* anime, Entity* player, float speed, int key = -1);
-	~Enemy();
 	void update(float deltaTime);
 	void drawOn(RenderWindow& window);
 };

@@ -19,16 +19,12 @@ Enemy::Enemy(Vector2f shapeSize, Vector2f startPos, Animation* anime, Entity* pl
 	cout << key << endl;
 }
 
-Enemy::~Enemy()
-{
-	cout << key << " Died!" << endl;
-}
-
 void Enemy::update(float deltaTime)
 {
 	if (Keyboard::isKeyPressed(Keyboard::Key(key)))
 	{
-		Enemy::~Enemy();
+		char c = key + 'a';
+		cout << c << " Died!" << endl;
 	}
 
 	Vector2f dir = player->getPosition() - getPosition();
